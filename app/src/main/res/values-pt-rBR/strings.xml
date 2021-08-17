@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyTodo</string>
+    <string name="new_item_float_button">Um botão para adicionar um novo item</string>
+    <string name="second_time">%1$d segundos</string>
+    <string name="minute_time">%1$d minutos</string>
+    <string name="hour_time">%1$d horas</string>
+    <string name="day_time">%1$d dias</string>
+</resources>
