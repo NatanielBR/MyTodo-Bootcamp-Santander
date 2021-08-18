@@ -14,7 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.natanielbr.mytodo.R
 import com.natanielbr.mytodo.databinding.TodoHomeFragmentBinding
 import com.natanielbr.mytodo.models.TodoItemViewModel
-import com.natanielbr.mytodo.models.data.TodoItem
+import com.natanielbr.mytodo.models.box.entitys.TodoItemEntity
 import com.natanielbr.mytodo.utils.TypeUtils.humanizeTime
 
 class TodoHomeFragment : Fragment() {
@@ -33,13 +33,9 @@ class TodoHomeFragment : Fragment() {
 
         bind.todoItens.also {
             it.layoutManager = LinearLayoutManager(it.context, LinearLayoutManager.VERTICAL, false)
-            it.adapter = TodoItemAdapter().also {
-                // TODO: 17/08/2021 Sample data
-                val now = System.currentTimeMillis()
-                it.data.add(TodoItem("Teste", now, now))
-                it.notifyItemChanged(0)
-            }
+            it.adapter = TodoItemAdapter()
         }
+
 
         // Fiz isso para evitar a supressão do aviso Lint.
         // Para evitar suprimir o aviso de forma global
@@ -62,7 +58,7 @@ class TodoHomeFragment : Fragment() {
 
 
     class TodoItemAdapter : RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder>() {
-        val data = mutableListOf<TodoItem>()
+        val data = mutableListOf<TodoItemEntity>()
 
         class TodoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var nameView: TextView = itemView.findViewById(R.id.todo_name_view)
