@@ -1,8 +1,7 @@
-package com.natanielbr.mytodo.models.box
+package com.natanielbr.mytodo.models.dataSource.box
 
 import android.content.Context
-import com.natanielbr.mytodo.models.box.entitys.MyObjectBox
-import com.natanielbr.mytodo.models.box.entitys.TodoItemEntity
+import com.natanielbr.mytodo.models.dataSource.box.entitys.MyObjectBox
 import io.objectbox.BoxStore
 
 object ObjectBox {

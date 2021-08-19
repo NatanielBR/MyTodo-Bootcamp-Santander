@@ -1,4 +1,4 @@
-package com.natanielbr.mytodo.models.box.entitys
+package com.natanielbr.mytodo.models.dataSource.box.entitys
 
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
