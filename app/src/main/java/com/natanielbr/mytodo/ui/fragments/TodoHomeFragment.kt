@@ -57,19 +57,6 @@ class TodoHomeFragment : Fragment() {
         // separei em um metodo e coloquei o supress lá.
         bind.refreshLayout.setOnRefreshListener(::onRefresh)
 
-        lifecycleScope.launchWhenResumed {
-            val data = withContext(Dispatchers.IO) { TodoItemRepository.dataSource.getAll() }
-
-            getRecyclerView().adapter.also {
-                it ?: return@also
-                it as TodoItemAdapter
-
-                it.data.clear()
-                it.data.addAll(data)
-                onRefresh()
-            }
-        }
-
         return bind.root
     }
 
@@ -95,16 +82,29 @@ class TodoHomeFragment : Fragment() {
         return requireView().findViewById(R.id.todo_itens)
     }
 
+    override fun onResume() {
+        lifecycleScope.launch {
+            val data = withContext(Dispatchers.IO) { TodoItemRepository.dataSource.getAll() }
+
+            getRecyclerView().adapter.also {
+                it ?: return@also
+                it as TodoItemAdapter
+
+                it.data.clear()
+                it.data.addAll(data)
+                onRefresh()
+            }
+        }
+        super.onResume()
+    }
+
+    //region RecyclerView Adapter
 
     class TodoItemAdapter : RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder>() {
         val data = mutableListOf<TodoItem>()
 
         class TodoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var nameView: TextView = itemView.findViewById(R.id.todo_name_view)
-            val createdView: TextView =
-                itemView.findViewById(R.id.todo_created_view) // in Time humanized
-            var updatedView: TextView =
-                itemView.findViewById(R.id.todo_updated_view) // in Time humanized
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemViewHolder {
@@ -117,12 +117,12 @@ class TodoHomeFragment : Fragment() {
             val item = data[position]
 
             holder.nameView.text = item.name
-            holder.createdView.text = item.created.humanizeTime(holder.createdView.context)
-            holder.updatedView.text = item.updated.humanizeTime(holder.updatedView.context)
         }
 
         override fun getItemCount(): Int {
             return data.size
         }
     }
+
+    //endregion
 }

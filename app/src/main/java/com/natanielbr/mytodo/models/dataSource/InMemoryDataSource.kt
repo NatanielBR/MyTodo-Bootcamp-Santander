@@ -10,9 +10,7 @@ class InMemoryDataSource() : DataSource(null) {
     init {
         // dummy data
         val now = System.currentTimeMillis()
-        db[0] = TodoItem(0, "Tarefa 1", now, now)
-        db[1] = TodoItem(1, "Tarefa 2", now + 60, now + 60)
-        db[2] = TodoItem(2, "Tarefa 3", now + 120, now + 120)
+        db[0] = TodoItem(0, "Tarefa 1", now + 5)
     }
 
     override fun getAll(): List<TodoItem> {
@@ -32,11 +30,16 @@ class InMemoryDataSource() : DataSource(null) {
     }
 
     override fun insert(item: TodoItem): TodoItem {
-        generateId().also {
-            val nItem = TodoItem(it, item.name, item.created, item.updated)
-            db[it] = nItem
+        if (item.id == -1L) {
+            generateId().also {
+                val nItem = item.copy(id = item.id)
+                db[it] = nItem
 
-            return nItem
+                return nItem
+            }
+        } else {
+            db[item.id] = item
+            return item
         }
     }
 
