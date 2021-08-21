@@ -43,12 +43,10 @@ class TodoHomeFragment : Fragment() {
 
         bind.todoItens.also {
             it.layoutManager = LinearLayoutManager(it.context, LinearLayoutManager.VERTICAL, false)
-            it.adapter = TodoItemAdapter(this)
-
-            bind.todoItens.setOnItemClickListener { recyclerView, position, isLongTouch ->
+            it.adapter = TodoItemAdapter(this) { item, _ ->
                 val nav = findNavController()
-                val adapter = recyclerView.adapter as TodoItemAdapter
-                todoModel.selectedItem = adapter.data[position]
+
+                todoModel.selectedItem = item
                 Log.d("neodev", "onCreateView: ${todoModel.selectedItem?.name}")
                 nav.navigate(R.id.toEditor)
             }
@@ -133,7 +131,10 @@ class TodoHomeFragment : Fragment() {
 
     //region RecyclerView Adapter
 
-    class TodoItemAdapter(private val todoHomeFragment: TodoHomeFragment) :
+    class TodoItemAdapter(
+        private val todoHomeFragment: TodoHomeFragment,
+        private val clickListener: (item: TodoItem, position: Int) -> Unit,
+    ) :
         RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder>() {
         val data = mutableListOf<TodoItem>()
 
@@ -144,7 +145,7 @@ class TodoHomeFragment : Fragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemViewHolder {
             val layout = LayoutInflater.from(parent.context)
-                .inflate(R.layout.todo_item_view_holder, null, false)
+                .inflate(R.layout.todo_item_view_holder, parent, false)
 
             return TodoItemViewHolder(layout)
         }
@@ -153,6 +154,9 @@ class TodoHomeFragment : Fragment() {
             val item = data[position]
 
             holder.nameView.text = item.name
+            holder.nameView.setOnClickListener {
+                clickListener.invoke(item, position)
+            }
             holder.enabledView.isChecked = item.enabled
             holder.enabledView.setOnCheckedChangeListener(null)
 
