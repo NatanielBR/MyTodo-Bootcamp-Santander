@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 class MutableListLiveData<Type> : MutableLiveData<MutableList<Type>>() {
 
     init {
-        value = mutableListOf()
+        super.setValue(mutableListOf())
     }
 
     /**
@@ -21,8 +21,8 @@ class MutableListLiveData<Type> : MutableLiveData<MutableList<Type>>() {
         "Não use esse metodo, mas use o transaction()",
         ReplaceWith("this.transaction{  }")
     )
-    override fun getValue(): MutableList<Type>? {
-        return super.getValue()
+    override fun setValue(l: MutableList<Type>){
+        super.setValue(l)
     }
 
     /**

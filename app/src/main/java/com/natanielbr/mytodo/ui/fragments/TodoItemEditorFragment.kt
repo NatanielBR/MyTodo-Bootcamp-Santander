@@ -14,16 +14,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.google.android.material.textfield.TextInputEditText
 import com.natanielbr.mytodo.R
 import com.natanielbr.mytodo.databinding.TodoItemEditorFragmentBinding
 import com.natanielbr.mytodo.models.TodoItemRepository
 import com.natanielbr.mytodo.models.TodoItemViewModel
 import com.natanielbr.mytodo.models.dataSource.model.TodoItem
+import com.natanielbr.mytodo.ui.services.TodoNotifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
@@ -80,11 +87,15 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             if (target != null) {
                 target.name = getNameTextField().text.toString()
 
-                requireActivity().lifecycleScope.launch(Dispatchers.IO) {
-                    Log.d("neodev", "Salvando $target")
-                    TodoItemRepository.dataSource
-                        .insert(target)
-                }
+                // Não fiz isso em dentro de uma coroutine por que
+                // o update no UI não irá funcionar de forma bem
+                // Percebi que o Save é feito de forma rapida
+                // então não vai impactar ao usuario
+                target.enabled = true
+                val item = TodoItemRepository.dataSource
+                    .insert(target)
+
+                item.scheduleNotification(requireContext())
 
                 todoModel.selectedItem = null
 

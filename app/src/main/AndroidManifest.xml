@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.natanielbr.mytodo">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".MyTodoApp"
         android:icon="@mipmap/ic_launcher"

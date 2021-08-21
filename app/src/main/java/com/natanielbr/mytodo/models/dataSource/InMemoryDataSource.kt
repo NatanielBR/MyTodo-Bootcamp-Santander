@@ -1,23 +1,22 @@
 package com.natanielbr.mytodo.models.dataSource
 
-import android.content.Context
 import com.natanielbr.mytodo.models.dataSource.model.TodoItem
 import kotlin.random.Random
 
 class InMemoryDataSource() : DataSource(null) {
-    private val db: MutableMap<Long, TodoItem> = mutableMapOf()
+    private val db: MutableMap<Int, TodoItem> = mutableMapOf()
 
     init {
         // dummy data
         val now = System.currentTimeMillis()
-        db[0] = TodoItem(0, "Tarefa 1", now + 5)
+        db[0] = TodoItem(0, "Tarefa 1", now + 20000)
     }
 
     override fun getAll(): List<TodoItem> {
         return db.values.toList()
     }
 
-    override fun get(id: Long): TodoItem? {
+    override fun get(id: Int): TodoItem? {
         return db[id]
     }
 
@@ -25,12 +24,12 @@ class InMemoryDataSource() : DataSource(null) {
         return getByName(item.name) ?: insert(item)
     }
 
-    override fun exists(id: Long): Boolean {
+    override fun exists(id: Int): Boolean {
         return db.containsKey(id)
     }
 
     override fun insert(item: TodoItem): TodoItem {
-        if (item.id == -1L) {
+        if (item.id == -1) {
             generateId().also {
                 val nItem = item.copy(id = item.id)
                 db[it] = nItem
@@ -51,7 +50,7 @@ class InMemoryDataSource() : DataSource(null) {
         return remove(item.id)
     }
 
-    override fun remove(id: Long): Boolean {
+    override fun remove(id: Int): Boolean {
         return if (exists(id)) {
             db.remove(id)
             true
@@ -60,7 +59,7 @@ class InMemoryDataSource() : DataSource(null) {
         }
     }
 
-    override fun removeAll(ids: List<Long>): Boolean {
+    override fun removeAll(ids: List<Int>): Boolean {
         return ids.map { remove(it) }.find { it } ?: false
     }
 
@@ -69,11 +68,11 @@ class InMemoryDataSource() : DataSource(null) {
         return db.values.find { it.name == name }
     }
 
-    private fun generateId(): Long {
-        var id: Long
+    private fun generateId(): Int {
+        var id: Int
 
         do {
-            id = Random.nextLong()
+            id = Random.nextInt()
         } while (!exists(id))
 
         return id

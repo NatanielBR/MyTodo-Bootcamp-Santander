@@ -1,5 +1,6 @@
 package com.natanielbr.mytodo
 
+import android.media.RingtoneManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -24,6 +25,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        intent?.also{
+            // a unica intent será o click da notificação do alarme
+            // logo não preciso filtrar
+
+            MyTodoApp.alarmSound.stop()
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

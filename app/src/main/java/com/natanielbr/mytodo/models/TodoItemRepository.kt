@@ -9,4 +9,8 @@ object TodoItemRepository {
     fun init(dataSource: DataSource) {
         this.dataSource = dataSource
     }
+
+    fun isInitialized(): Boolean{
+        return TodoItemRepository::dataSource.isInitialized
+    }
 }

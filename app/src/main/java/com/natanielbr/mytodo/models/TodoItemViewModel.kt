@@ -16,17 +16,16 @@ class TodoItemViewModel : ViewModel() {
     // se houver algo, será pra editar
     var selectedItem: TodoItem? = null
 
-    val items: MutableListLiveData<TodoItemEntity> by lazy {
+    val items: MutableListLiveData<TodoItem> by lazy {
         MutableListLiveData()
     }
 
     @WorkerThread
     suspend fun getAll() {
         withContext(Dispatchers.IO) {
-            val box = ObjectBox.store.boxFor(TodoItemEntity::class.java)
+            val dataSource = TodoItemRepository.dataSource
 
-            val list = box.query().order(TodoItemEntity_.updated)
-                .build().find()
+            val list = dataSource.getAll()
 
             items.transaction {
                 clear()
