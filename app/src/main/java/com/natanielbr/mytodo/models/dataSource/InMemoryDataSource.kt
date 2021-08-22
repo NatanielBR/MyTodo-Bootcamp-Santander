@@ -1,16 +1,11 @@
 package com.natanielbr.mytodo.models.dataSource
 
 import com.natanielbr.mytodo.models.dataSource.model.TodoItem
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 class InMemoryDataSource() : DataSource(null) {
     private val db: MutableMap<Int, TodoItem> = mutableMapOf()
-
-    init {
-        // dummy data
-        val now = System.currentTimeMillis()
-        db[0] = TodoItem(0, "Tarefa 1", now + 20000)
-    }
 
     override fun getAll(): List<TodoItem> {
         return db.values.toList()
@@ -31,7 +26,7 @@ class InMemoryDataSource() : DataSource(null) {
     override fun insert(item: TodoItem): TodoItem {
         if (item.id == -1) {
             generateId().also {
-                val nItem = item.copy(id = item.id)
+                val nItem = item.copy(id = it)
                 db[it] = nItem
 
                 return nItem
@@ -72,8 +67,8 @@ class InMemoryDataSource() : DataSource(null) {
         var id: Int
 
         do {
-            id = Random.nextInt()
-        } while (!exists(id))
+            id = Random.nextInt().absoluteValue
+        } while (exists(id))
 
         return id
     }
