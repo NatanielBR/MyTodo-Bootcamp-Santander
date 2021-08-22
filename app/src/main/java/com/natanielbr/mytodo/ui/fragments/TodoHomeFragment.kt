@@ -122,11 +122,12 @@ class TodoHomeFragment : Fragment() {
     }
 
     override fun onResume() {
-        lifecycleScope.launch {
-            todoModel.getAll()
-            onRefresh()
-        }
         super.onResume()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            todoModel.getAll()
+            getRecyclerView().post { onRefresh() }
+        }
     }
 
     //region RecyclerView Adapter

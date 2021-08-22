@@ -29,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -37,6 +38,8 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
     val todoModel: TodoItemViewModel by activityViewModels()
 
     var target: TodoItem? = null
+
+    var calendar: Calendar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,13 +54,12 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
 
         todoModel.selectedItem?.also {
             target = it.copy()
-
-            Log.d("neodev", "Carregando: $target")
-
-            binder.editTextTextPersonName.setText(it.name)
-
+            calendar = Calendar.getInstance()
             val date = Date(it.target)
 
+            calendar!!.time = date
+
+            binder.editTextTextPersonName.setText(it.name)
             binder.dateField.setText(formatDate(date, requireContext()))
             binder.timeField.setText(formatTime(date, requireContext()))
         }
@@ -70,7 +72,6 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             // clickListener
             if (!hasFocus) return@setOnFocusChangeListener
             showCalendarPicker(v.context)
-            getTimeTextField().setText("")
             v.clearFocus()
         }
 
@@ -86,6 +87,7 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
 
             if (target != null) {
                 target.name = getNameTextField().text.toString()
+                target.target = calendar!!.timeInMillis
 
                 // Não fiz isso em dentro de uma coroutine por que
                 // o update no UI não irá funcionar de forma bem
@@ -154,25 +156,19 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
     }
 
     override fun onDateSet(view: DatePicker, year: Int, month: Int, dayOfMonth: Int) {
-        val calendar = Calendar.getInstance()
 
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        calendar!!.set(Calendar.YEAR, year)
+        calendar!!.set(Calendar.MONTH, month)
+        calendar!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-        target?.target = calendar.timeInMillis
-
-        getDateTextField().setText(formatDate(calendar.time, view.context))
+        getDateTextField().setText(formatDate(calendar!!.time, view.context))
     }
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        val calendar = Calendar.getInstance()
 
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-        calendar.set(Calendar.MINUTE, minute)
+        calendar!!.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        calendar!!.set(Calendar.MINUTE, minute)
 
-        target?.target = calendar.timeInMillis
-
-        getTimeTextField().setText(formatTime(calendar.time, view.context))
+        getTimeTextField().setText(formatTime(calendar!!.time, view.context))
     }
 }
