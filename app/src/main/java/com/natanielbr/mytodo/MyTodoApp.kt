@@ -5,6 +5,7 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import com.natanielbr.mytodo.models.TodoItemRepository
 import com.natanielbr.mytodo.models.dataSource.InMemoryDataSource
+import com.natanielbr.mytodo.models.dataSource.ObjectBoxDataSource
 import com.natanielbr.mytodo.models.dataSource.box.ObjectBox
 
 class MyTodoApp : Application() {
@@ -14,9 +15,7 @@ class MyTodoApp : Application() {
     }
 
     override fun onCreate() {
-        ObjectBox.init(this)
-        // STOPSHIP: 20/08/2021 Troca isso para o ObjectBox
-        TodoItemRepository.init(InMemoryDataSource())
+        TodoItemRepository.init(ObjectBoxDataSource(this))
         alarmSound = RingtoneManager.getRingtone(
             applicationContext,
             RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)

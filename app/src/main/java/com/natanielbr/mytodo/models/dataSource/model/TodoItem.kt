@@ -11,7 +11,7 @@ import com.natanielbr.mytodo.ui.services.TodoNotifier
 import java.util.concurrent.TimeUnit
 
 data class TodoItem(
-    val id: Int = -1,
+    val id: Int = 0,
     var name: String, // Nome unico, o datasource irá cuidar disso
     var target: Long, // Em Epoch
     var enabled: Boolean = true // Para evitar que notifique algo que já passou

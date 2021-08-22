@@ -4,7 +4,7 @@ import com.natanielbr.mytodo.models.dataSource.model.TodoItem
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
-class InMemoryDataSource() : DataSource(null) {
+class InMemoryDataSource() : DataSource() {
     private val db: MutableMap<Int, TodoItem> = mutableMapOf()
 
     override fun getAll(): List<TodoItem> {
@@ -15,16 +15,12 @@ class InMemoryDataSource() : DataSource(null) {
         return db[id]
     }
 
-    override fun getOrCreate(item: TodoItem): TodoItem {
-        return getByName(item.name) ?: insert(item)
-    }
-
     override fun exists(id: Int): Boolean {
         return db.containsKey(id)
     }
 
     override fun insert(item: TodoItem): TodoItem {
-        if (item.id == -1) {
+        if (item.id == 0) {
             generateId().also {
                 val nItem = item.copy(id = it)
                 db[it] = nItem
@@ -35,10 +31,6 @@ class InMemoryDataSource() : DataSource(null) {
             db[item.id] = item
             return item
         }
-    }
-
-    override fun insertAll(items: List<TodoItem>): List<TodoItem> {
-        return items.map { insert(it) }
     }
 
     override fun remove(item: TodoItem): Boolean {
@@ -52,10 +44,6 @@ class InMemoryDataSource() : DataSource(null) {
         } else {
             false
         }
-    }
-
-    override fun removeAll(ids: List<Int>): Boolean {
-        return ids.map { remove(it) }.find { it } ?: false
     }
 
 
