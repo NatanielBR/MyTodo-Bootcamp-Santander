@@ -72,6 +72,11 @@ class TodoHomeFragment : Fragment() {
         // separei em um metodo e coloquei o supress lá.
         bind.refreshLayout.setOnRefreshListener(::onRefresh)
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            todoModel.getAll()
+            getRecyclerView().post { onRefresh() }
+        }
+
         return bind.root
     }
 
@@ -121,15 +126,6 @@ class TodoHomeFragment : Fragment() {
         requireActivity().lifecycleScope.launch(Dispatchers.IO) {
             TodoItemRepository.dataSource.insert(todoItem)
             withContext(Dispatchers.Main) { onRefresh() }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            todoModel.getAll()
-            getRecyclerView().post { onRefresh() }
         }
     }
 
