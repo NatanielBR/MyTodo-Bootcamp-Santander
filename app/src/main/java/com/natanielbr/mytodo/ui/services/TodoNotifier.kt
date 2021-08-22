@@ -34,7 +34,7 @@ class TodoNotifier(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        val id = inputData.getLong(NOTIFICATION_ID, 0).toInt()
+        val id = inputData.getInt(NOTIFICATION_ID, 0)
 
         withContext(Dispatchers.IO) {
             TodoItemRepository.dataSource.also {

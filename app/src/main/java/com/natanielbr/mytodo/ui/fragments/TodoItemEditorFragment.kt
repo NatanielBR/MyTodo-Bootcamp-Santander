@@ -52,7 +52,8 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
 
         val binder = TodoItemEditorFragmentBinding.inflate(inflater, container, false)
 
-        todoModel.selectedItem?.also {
+        if (todoModel.selectedItem != null){
+            val it = todoModel.selectedItem!!
             target = it.copy()
             calendar = Calendar.getInstance()
             val date = Date(it.target)
@@ -60,6 +61,14 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             calendar.time = date
 
             binder.editTextTextPersonName.setText(it.name)
+            binder.dateField.setText(formatDate(date, requireContext()))
+            binder.timeField.setText(formatTime(date, requireContext()))
+        }else{
+            target = TodoItem(name = "", target = 0)
+
+            calendar = Calendar.getInstance()
+            val date = calendar.time
+
             binder.dateField.setText(formatDate(date, requireContext()))
             binder.timeField.setText(formatTime(date, requireContext()))
         }

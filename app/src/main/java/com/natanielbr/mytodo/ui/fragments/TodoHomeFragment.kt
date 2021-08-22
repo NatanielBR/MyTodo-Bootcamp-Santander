@@ -54,6 +54,13 @@ class TodoHomeFragment : Fragment() {
             }
         }
 
+        bind.newTodoButton.setOnClickListener {
+            val nav = findNavController()
+
+            todoModel.selectedItem = null
+            nav.navigate(R.id.toEditor)
+        }
+
         todoModel.items.observe(viewLifecycleOwner, {
             it!!
 
@@ -72,12 +79,16 @@ class TodoHomeFragment : Fragment() {
         // separei em um metodo e coloquei o supress lá.
         bind.refreshLayout.setOnRefreshListener(::onRefresh)
 
+        return bind.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         lifecycleScope.launch(Dispatchers.IO) {
             todoModel.getAll()
             getRecyclerView().post { onRefresh() }
         }
-
-        return bind.root
     }
 
     @SuppressLint("NotifyDataSetChanged")

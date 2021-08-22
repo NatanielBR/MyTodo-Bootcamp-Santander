@@ -6,6 +6,7 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.natanielbr.mytodo.ui.services.NOTIFICATION_ID
 import com.natanielbr.mytodo.ui.services.TodoNotifier
 import java.util.concurrent.TimeUnit
 
@@ -22,7 +23,8 @@ data class TodoItem(
 
     fun scheduleNotification(context: Context) {
         val uniqueName = getUniqueName()
-        val data = Data.Builder().putInt(uniqueName, 0).build()
+        val data = Data.Builder()
+            .putInt(NOTIFICATION_ID, id).build()
         var delay = target - System.currentTimeMillis()
         if (delay < 0) delay = 0
 
@@ -30,7 +32,7 @@ data class TodoItem(
             .addTag(uniqueName)
             .setInitialDelay(delay, TimeUnit.MILLISECONDS).setInputData(data).build()
 
-        Log.d("neodev", "scheduleNotification: $delay - ${name}")
+        Log.d("neodev", "scheduleNotification: $delay - $name")
 
         val instanceWorkManager = WorkManager.getInstance(context)
         instanceWorkManager.beginUniqueWork(
