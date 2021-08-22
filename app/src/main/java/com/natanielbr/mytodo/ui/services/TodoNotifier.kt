@@ -65,7 +65,7 @@ class TodoNotifier(context: Context, workerParams: WorkerParameters) :
             applicationContext,
             applicationContext.getString(R.string.notification_channel_id)
         )
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setContentTitle(titleNotification)
 //            .setContentText("Testando notificação")
             .setContentIntent(getActivity(applicationContext, 0, intent, 0))
