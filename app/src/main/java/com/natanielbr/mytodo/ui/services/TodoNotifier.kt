@@ -80,7 +80,7 @@ class TodoNotifier(context: Context, workerParams: WorkerParameters) :
             val ringtoneManager = getDefaultUri(RingtoneManager.TYPE_ALARM)
             val audioAttributes = AudioAttributes.Builder().setUsage(USAGE_NOTIFICATION_RINGTONE)
                 .setContentType(CONTENT_TYPE_SONIFICATION).build()
-
+            // STOPSHIP: 22/08/2021 Cuidar das strings
             val channel = NotificationChannel(
                 applicationContext.getString(R.string.notification_channel_id),
                 "MyTodo Service", IMPORTANCE_HIGH

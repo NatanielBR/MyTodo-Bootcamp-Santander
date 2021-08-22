@@ -7,4 +7,8 @@
     <string name="hour_time">%1$d horas</string>
     <string name="day_time">%1$d dias</string>
     <string name="next_item">Próximo To-do - %1$s</string>
+    <string name="channel_name">Serviço MyTodo</string>
+    <string name="channel_description">MyTodo requer este serviço para funcionar, ignore isso.</string>
+    <string name="finished">Finalizado</string>
+    <string name="interval_text">Daqui a %1$s</string>
 </resources>

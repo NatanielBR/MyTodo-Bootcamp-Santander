@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/todoHomeFragment">
     <fragment
         android:id="@+id/todoHomeFragment"
         android:name="com.natanielbr.mytodo.ui.fragments.TodoHomeFragment"
-        android:label="TodoHomeFragment" >
+        android:label="@string/app_name">
         <action
             android:id="@+id/toEditor"
             app:destination="@id/todoItemEditorFragment" />
@@ -15,7 +14,7 @@
     <fragment
         android:id="@+id/todoItemEditorFragment"
         android:name="com.natanielbr.mytodo.ui.fragments.TodoItemEditorFragment"
-        android:label="TodoItemEditorFragment" >
+        android:label="@string/app_name">
         <action
             android:id="@+id/toHome1"
             app:destination="@id/todoHomeFragment" />

@@ -1,14 +1,7 @@
 <resources>
     <string name="app_name">MyTodo</string>
-    <string name="action_settings" translatable="false">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label" translatable="false">First Fragment</string>
-    <string name="second_fragment_label" translatable="false">Second Fragment</string>
-    <string name="next" translatable="false">Next</string>
-    <string name="previous" translatable="false">Previous</string>
 
-    <string name="hello_first_fragment" translatable="false">Hello first fragment</string>
-    <string name="hello_second_fragment" translatable="false">Hello second fragment. Arg: %1$s</string>
     <string name="new_item_float_button">A button to add new item</string>
     <string name="second_time">%1$d seconds</string>
     <string name="minute_time">%1$d minutes</string>
@@ -18,4 +11,6 @@
     <string name="next_item">Next To-do - %1$s</string>
     <string name="channel_name">MyTodo Service</string>
     <string name="channel_description">MyTodo require this service to work, ignore this.</string>
+    <string name="finished">Finished</string>
+    <string name="interval_text">%1$s from now</string>
 </resources>

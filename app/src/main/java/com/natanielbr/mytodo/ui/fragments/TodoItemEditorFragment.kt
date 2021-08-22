@@ -35,11 +35,11 @@ import java.util.concurrent.TimeUnit
 
 class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
-    val todoModel: TodoItemViewModel by activityViewModels()
+    private val todoModel: TodoItemViewModel by activityViewModels()
 
     var target: TodoItem? = null
 
-    var calendar: Calendar? = null
+    lateinit var calendar: Calendar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +57,7 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             calendar = Calendar.getInstance()
             val date = Date(it.target)
 
-            calendar!!.time = date
+            calendar.time = date
 
             binder.editTextTextPersonName.setText(it.name)
             binder.dateField.setText(formatDate(date, requireContext()))
@@ -87,7 +87,7 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
 
             if (target != null) {
                 target.name = getNameTextField().text.toString()
-                target.target = calendar!!.timeInMillis
+                target.target = calendar.timeInMillis
 
                 // Não fiz isso em dentro de uma coroutine por que
                 // o update no UI não irá funcionar de forma bem
@@ -122,22 +122,18 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
     }
 
     private fun showCalendarPicker(context: Context) {
-        val now = Calendar.getInstance()
-
         val picker = DatePickerDialog(
             context, this@TodoItemEditorFragment,
-            now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH)
+            calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
         )
 
         picker.show()
     }
 
     private fun showTimePicker(context: Context) {
-        val now = Calendar.getInstance()
-
         val picker = TimePickerDialog(
             context, this@TodoItemEditorFragment,
-            now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true
+            calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true
         )
 
         picker.show()
@@ -157,18 +153,18 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
 
     override fun onDateSet(view: DatePicker, year: Int, month: Int, dayOfMonth: Int) {
 
-        calendar!!.set(Calendar.YEAR, year)
-        calendar!!.set(Calendar.MONTH, month)
-        calendar!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month)
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-        getDateTextField().setText(formatDate(calendar!!.time, view.context))
+        getDateTextField().setText(formatDate(calendar.time, view.context))
     }
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
 
-        calendar!!.set(Calendar.HOUR_OF_DAY, hourOfDay)
-        calendar!!.set(Calendar.MINUTE, minute)
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        calendar.set(Calendar.MINUTE, minute)
 
-        getTimeTextField().setText(formatTime(calendar!!.time, view.context))
+        getTimeTextField().setText(formatTime(calendar.time, view.context))
     }
 }

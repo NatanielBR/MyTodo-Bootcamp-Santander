@@ -1,6 +1,7 @@
 package com.natanielbr.mytodo.ui.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import com.natanielbr.mytodo.models.TodoItemRepository
 import com.natanielbr.mytodo.models.TodoItemViewModel
 import com.natanielbr.mytodo.models.dataSource.model.TodoItem
 import com.natanielbr.mytodo.utils.RecyclerViewUtils.setOnItemClickListener
+import com.natanielbr.mytodo.utils.TypeUtils.humanizeTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -105,6 +107,7 @@ class TodoHomeFragment : Fragment() {
             .text.toString().let { title ->
                 todoModel.items.value!!.find { it.name == title }!!
             }
+        // STOPSHIP: 22/08/2021 cuidar das strings
         if (!ischecked) {
             Toast.makeText(requireContext(), "Cancelado!", Toast.LENGTH_SHORT)
                 .show()
@@ -142,6 +145,7 @@ class TodoHomeFragment : Fragment() {
         class TodoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var nameView: TextView = itemView.findViewById(R.id.todo_name_view)
             var enabledView: CheckBox = itemView.findViewById(R.id.todo_enabled_view)
+            var delayView: TextView = itemView.findViewById(R.id.todo_delay_view)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemViewHolder {
@@ -155,15 +159,22 @@ class TodoHomeFragment : Fragment() {
             val item = data[position]
 
             holder.nameView.text = item.name
+            holder.delayView.text = humanizeDelay(item, holder.delayView.context)
             holder.nameView.setOnClickListener {
                 clickListener.invoke(item, position)
             }
             holder.enabledView.isChecked = item.enabled
             holder.enabledView.setOnCheckedChangeListener(null)
 
-
-
             holder.enabledView.setOnCheckedChangeListener(todoHomeFragment::onCheckedChange)
+        }
+
+        private fun humanizeDelay(todoItem: TodoItem, context: Context): String {
+            return if (todoItem.target < System.currentTimeMillis() || !todoItem.enabled) {
+                context.getString(R.string.finished)
+            } else {
+                context.getString(R.string.interval_text, todoItem.target.humanizeTime(context))
+            }
         }
 
         override fun getItemCount(): Int {
