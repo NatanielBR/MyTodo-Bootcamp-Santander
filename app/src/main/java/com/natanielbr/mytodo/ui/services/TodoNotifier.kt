@@ -3,6 +3,7 @@ package com.natanielbr.mytodo.ui.services
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
+import android.app.PendingIntent
 import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
@@ -72,8 +73,22 @@ class TodoNotifier(context: Context, workerParams: WorkerParameters) :
         )
             .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setContentTitle(titleNotification)
-            .setContentIntent(getActivity(applicationContext, 0, intent, 0))
-            .setDeleteIntent(getActivity(applicationContext, 0, intent, 0))
+            .setContentIntent(
+                getActivity(
+                    applicationContext,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+            .setDeleteIntent(
+                getActivity(
+                    applicationContext,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
             .setDefaults(DEFAULT_ALL).setAutoCancel(true)
 
         notification.priority = PRIORITY_MAX

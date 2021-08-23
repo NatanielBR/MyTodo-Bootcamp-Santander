@@ -2,14 +2,31 @@
 <resources>
     <string name="app_name">MyTodo</string>
     <string name="new_item_float_button">Um botão para adicionar um novo item</string>
-    <string name="second_time">%1$d segundo(s)</string>
-    <string name="minute_time">%1$d minuto(s)</string>
-    <string name="hour_time">%1$d hora(s)</string>
-    <string name="day_time">%1$d dia(s)</string>
+    <plurals name="second_time">
+        <item quantity="one">%1$d segundo</item>
+        <item quantity="other">%1$d segundos</item>
+    </plurals>
+    <plurals name="minute_time">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="other">%1$d minutos</item>
+    </plurals>
+    <plurals name="hour_time">
+        <item quantity="one">%1$d hora</item>
+        <item quantity="other">%1$d horas</item>
+    </plurals>
+    <plurals name="day_time">
+        <item quantity="one">%1$d dia</item>
+        <item quantity="other">%1$d dias</item>
+    </plurals>
     <string name="next_item">Próximo To-do - %1$s</string>
     <string name="channel_name">Serviço MyTodo</string>
     <string name="channel_description">MyTodo requer este serviço para funcionar, ignore isso.</string>
     <string name="finished">Finalizado</string>
     <string name="interval_text">Daqui a %1$s</string>
     <string name="canceled">Cancelado!</string>
+    <string name="description_new_todo">Botão para adicionar um novo todo</string>
+    <string name="name_text_field">Nome</string>
+    <string name="date_text_field">Data</string>
+    <string name="time_text_field">Horário</string>
+    <string name="description_save_todo">Botão para salvar um todo</string>
 </resources>

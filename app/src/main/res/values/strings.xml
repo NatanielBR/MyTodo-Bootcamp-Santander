@@ -3,10 +3,22 @@
     <!-- Strings used for fragments for navigation -->
 
     <string name="new_item_float_button">A button to add new item</string>
-    <string name="second_time">%1$d second(s)</string>
-    <string name="minute_time">%1$d minute(s)</string>
-    <string name="hour_time">%1$d hour(s)</string>
-    <string name="day_time">%1$d day(s)</string>
+    <plurals name="second_time">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <plurals name="minute_time">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <plurals name="hour_time">
+        <item quantity="one">%1$d hour</item>
+        <item quantity="other">%1$d hours</item>
+    </plurals>
+    <plurals name="day_time">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
     <string name="notification_channel_id" translatable="false">todo_item_notifier</string>
     <string name="next_item">Next To-do - %1$s</string>
     <string name="channel_name">MyTodo Service</string>
@@ -14,4 +26,9 @@
     <string name="finished">Finished</string>
     <string name="interval_text">%1$s from now</string>
     <string name="canceled">Canceled!</string>
+    <string name="description_new_todo">Button to create a new todo</string>
+    <string name="description_save_todo">Button to save a todo</string>
+    <string name="name_text_field">Name</string>
+    <string name="date_text_field">Date</string>
+    <string name="time_text_field">Schedule</string>
 </resources>
