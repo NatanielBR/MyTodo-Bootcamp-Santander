@@ -25,6 +25,7 @@ import com.natanielbr.mytodo.MainActivity
 import com.natanielbr.mytodo.MyTodoApp
 import com.natanielbr.mytodo.R
 import com.natanielbr.mytodo.models.TodoItemRepository
+import com.natanielbr.mytodo.models.dataSource.model.TodoItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -43,22 +44,23 @@ class TodoNotifier(context: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         val id = inputData.getInt(NOTIFICATION_ID, 0)
+        val todo: TodoItem
 
         withContext(Dispatchers.IO) {
             TodoItemRepository.dataSource.also {
-                val todo = it.get(id)!!
+                todo = it.get(id)!!
                 todo.enabled = false
                 it.insert(todo)
             }
         }
 
-        sendNotification(id)
+        sendNotification(id, todo.name)
         MyTodoApp.alarmSound.play()
 
         return Result.success()
     }
 
-    private fun sendNotification(id: Int) {
+    private fun sendNotification(id: Int, title: String) {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
         intent.putExtra(NOTIFICATION_ID, id)
@@ -66,13 +68,12 @@ class TodoNotifier(context: Context, workerParams: WorkerParameters) :
         val notificationManager =
             applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        val titleNotification = applicationContext.getString(R.string.app_name)
         val notification = NotificationCompat.Builder(
             applicationContext,
             applicationContext.getString(R.string.notification_channel_id)
         )
             .setSmallIcon(R.mipmap.ic_launcher_foreground)
-            .setContentTitle(titleNotification)
+            .setContentTitle(title)
             .setContentIntent(
                 getActivity(
                     applicationContext,

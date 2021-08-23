@@ -24,19 +24,35 @@ object TypeUtils {
 
         when {
             time < 60 -> { // se é menor que um minuto
-                return context.getString(R.string.second_time, time)
+                return context.resources.getQuantityString(
+                    R.plurals.second_time,
+                    time.toInt(),
+                    time
+                )
             }
             time < 3600 -> { // se é menor que uma hora
                 time /= 60 // converte para minutos
-                return context.getString(R.string.minute_time, time)
+                return context.resources.getQuantityString(
+                    R.plurals.minute_time,
+                    time.toInt(),
+                    time
+                )
             }
             time < 86400 -> { // se é menor que 24 horas
                 time /= 3600 // converte para horas
-                return context.getString(R.string.hour_time, time)
+                return context.resources.getQuantityString(
+                    R.plurals.hour_time,
+                    time.toInt(),
+                    time
+                )
             }
             else -> {
                 time /= 86400 // converte para dias
-                return context.getString(R.string.day_time, time)
+                return context.resources.getQuantityString(
+                    R.plurals.day_time,
+                    time.toInt(),
+                    time
+                )
             }
         }
     }
