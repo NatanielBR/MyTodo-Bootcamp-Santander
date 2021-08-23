@@ -8,6 +8,11 @@ object ObjectBox {
     lateinit var store: BoxStore
         private set
 
+    /**
+     * Inicializa o ObjectBox. Ele recomenda o uso de applicationContext
+     * por que ele foi planejado para ser encerrado quando a aplicação
+     * se encerrar.
+     */
     fun init(context: Context) {
         store = MyObjectBox.builder()
             .androidContext(context.applicationContext)

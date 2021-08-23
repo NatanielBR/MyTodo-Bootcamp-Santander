@@ -1,10 +1,7 @@
 package com.natanielbr.mytodo.utils
 
 import android.content.Context
-import android.text.format.DateFormat.getDateFormat
 import com.natanielbr.mytodo.R
-import java.text.DateFormat
-import java.util.*
 import kotlin.math.absoluteValue
 
 
@@ -44,9 +41,4 @@ object TypeUtils {
         }
     }
 
-    fun Long.formatDate(context: Context): String {
-        val date = Date(this)
-        val dateFormat: DateFormat = getDateFormat(context)!!
-        return dateFormat.format(date)
-    }
 }

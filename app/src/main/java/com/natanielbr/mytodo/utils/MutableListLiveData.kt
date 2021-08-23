@@ -3,6 +3,12 @@ package com.natanielbr.mytodo.utils
 import androidx.annotation.MainThread
 import androidx.lifecycle.MutableLiveData
 
+/**
+ * Isso é um LiveDate para listas, esse codigo foi baseado em um outro
+ * achado na internet mas reescrevi corrigindo alguns detalhes que
+ * dificultava pra mim (o valor começava como null e tinha que setar
+ * isso antes por que irá ser lançada Exception e criei o metodo transaction()).
+ */
 class MutableListLiveData<Type> : MutableLiveData<MutableList<Type>>() {
 
     init {
@@ -26,7 +32,7 @@ class MutableListLiveData<Type> : MutableLiveData<MutableList<Type>>() {
     }
 
     /**
-     * Ira criar abrir um container onde é possivel fazer qualquer ação na lista.
+     * Ira criar abrir um bloco onde é possivel fazer qualquer ação na lista.
      * Apos realizar as alterações, o LiveData será notificada.
      */
     @MainThread

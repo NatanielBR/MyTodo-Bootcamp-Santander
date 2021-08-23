@@ -3,12 +3,13 @@ package com.natanielbr.mytodo.ui.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,19 +17,22 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.work.Data
 import androidx.work.WorkManager
 import com.natanielbr.mytodo.R
 import com.natanielbr.mytodo.databinding.TodoHomeFragmentBinding
 import com.natanielbr.mytodo.models.TodoItemRepository
 import com.natanielbr.mytodo.models.TodoItemViewModel
 import com.natanielbr.mytodo.models.dataSource.model.TodoItem
-import com.natanielbr.mytodo.utils.RecyclerViewUtils.setOnItemClickListener
 import com.natanielbr.mytodo.utils.TypeUtils.humanizeTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Fragmento inicial, onde irá ser exibido a lista de itens e o botão para adicionar
+ * um novo item. Caso clique em um dos itens, será aberto o editor e caso clique no
+ * botão irá ser aberto o criador (que no fundo é o mesmo editor ).
+ */
 class TodoHomeFragment : Fragment() {
     private val todoModel: TodoItemViewModel by activityViewModels()
 
@@ -49,7 +53,6 @@ class TodoHomeFragment : Fragment() {
                 val nav = findNavController()
 
                 todoModel.selectedItem = item
-                Log.d("neodev", "onCreateView: ${todoModel.selectedItem?.name}")
                 nav.navigate(R.id.toEditor)
             }
         }
@@ -91,6 +94,12 @@ class TodoHomeFragment : Fragment() {
         }
     }
 
+    /**
+     * Utilizo o SwipeRefreshLayout para cria a funcionalidade de refresh.
+     * Esse metodo irá obter a View e irá realizar o refresh, lembrando que
+     * esse metodo irá somente atualizar a UI, ou seja queira atualizar os
+     * itens primeiro atualize no ViewModel e depois chame esse metodo.
+     */
     @SuppressLint("NotifyDataSetChanged")
     private fun onRefresh() {
         requireView().also {
@@ -113,23 +122,33 @@ class TodoHomeFragment : Fragment() {
         return requireView().findViewById(R.id.todo_itens)
     }
 
+    /**
+     * Cancela o worker relacionado ao todoItem. Esse metodo é
+     * seguro caso o Worker não exista ou já esteja cancelado.
+     */
     private fun cancelTodo(todoItem: TodoItem) {
         WorkManager.getInstance(requireContext())
             .cancelAllWorkByTag(todoItem.getUniqueName())
     }
 
+    /**
+     * Ação quando clica no checkbox, caso marcado ele irá
+     * iniciar o Worker, caso desmarcado ele irá cancelar o Worker.
+     */
     fun onCheckedChange(button: CompoundButton, ischecked: Boolean) {
         val todoItem: TodoItem = (button.parent as View).findViewById<TextView>(R.id.todo_name_view)
             .text.toString().let { title ->
                 todoModel.items.value!!.find { it.name == title }!!
             }
-        // STOPSHIP: 22/08/2021 cuidar das strings
-        if (!ischecked) {
-            Toast.makeText(requireContext(), "Cancelado!", Toast.LENGTH_SHORT)
-                .show()
-            cancelTodo(todoItem)
-        } else {
+        if (ischecked) {
             todoItem.scheduleNotification(requireContext())
+        } else {
+            Toast.makeText(
+                requireContext(),
+                button.context.getText(R.string.canceled),
+                Toast.LENGTH_SHORT
+            ).show()
+            cancelTodo(todoItem)
         }
 
         todoItem.enabled = ischecked
@@ -176,6 +195,14 @@ class TodoHomeFragment : Fragment() {
             holder.enabledView.setOnCheckedChangeListener(todoHomeFragment::onCheckedChange)
         }
 
+        /**
+         * Irá transformar o tempo (em Epoch) em um tempo mais humanizado. Ao mesmo tempo
+         * irá colocar termos para ajudar a compreensão como:
+         * Daqui a 30 segundo(s)
+         * Daqui a 1 minuto(s)
+         * Daqui a 2 hora(s)
+         * Daqui a 3 dias(s)
+         */
         private fun humanizeDelay(todoItem: TodoItem, context: Context): String {
             return if (todoItem.target < System.currentTimeMillis() || !todoItem.enabled) {
                 context.getString(R.string.finished)

@@ -9,6 +9,12 @@ import com.natanielbr.mytodo.models.dataSource.box.entitys.TodoItemEntity.Compan
 import com.natanielbr.mytodo.models.dataSource.model.TodoItem
 import io.objectbox.Box
 
+/**
+ * Datasource persistente que será utilizada durante a produção
+ * e em momentos em que seja necessario. Ele irá utilizar o
+ * ObjectBox como forma de armazenar, não utilizei o Room e
+ * irei explicar no README.
+ */
 class ObjectBoxDataSource(context: Context) : DataSource() {
     private val box: Box<TodoItemEntity>
 

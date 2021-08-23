@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,32 +11,21 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.google.android.material.textfield.TextInputEditText
 import com.natanielbr.mytodo.R
 import com.natanielbr.mytodo.databinding.TodoItemEditorFragmentBinding
 import com.natanielbr.mytodo.models.TodoItemRepository
 import com.natanielbr.mytodo.models.TodoItemViewModel
 import com.natanielbr.mytodo.models.dataSource.model.TodoItem
-import com.natanielbr.mytodo.ui.services.TodoNotifier
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
     private val todoModel: TodoItemViewModel by activityViewModels()
 
-    var target: TodoItem? = null
+    lateinit var target: TodoItem
 
     lateinit var calendar: Calendar
 
@@ -52,7 +40,12 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
 
         val binder = TodoItemEditorFragmentBinding.inflate(inflater, container, false)
 
-        if (todoModel.selectedItem != null){
+        if (todoModel.selectedItem != null) {
+            /**
+             * Irá copiar o selectedItem para o target (isso é feito para evitar que o objeto da UI
+             * seja atualizado mesmo não salvando - será atualizado no visual não no Datasource)
+             * e transformar o tempo (em Epoch) para Calendar.
+             */
             val it = todoModel.selectedItem!!
             target = it.copy()
             calendar = Calendar.getInstance()
@@ -63,7 +56,10 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             binder.editTextTextPersonName.setText(it.name)
             binder.dateField.setText(formatDate(date, requireContext()))
             binder.timeField.setText(formatTime(date, requireContext()))
-        }else{
+        } else {
+            /**
+             * Irá criar um novo item e utilizar o tempo atual para preencher o tempo desse item.
+             */
             target = TodoItem(name = "", target = 0)
 
             calendar = Calendar.getInstance()
@@ -72,6 +68,13 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
             binder.dateField.setText(formatDate(date, requireContext()))
             binder.timeField.setText(formatTime(date, requireContext()))
         }
+
+        /**
+         * Tanto no dateField como no timeField é utilizado uma tecnica para
+         * impedir que o usuario altere o valor no teclado.
+         * Sempre que o field receber o foco, ele irá abrir o picker
+         * e limpar o foco, para que o ciclo se repita.
+         */
 
         binder.dateField.setOnFocusChangeListener { v, hasFocus ->
             // para a primeira vez que clicar no campo
@@ -94,25 +97,24 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         binder.saveFloatButton.setOnClickListener {
             val target = target
 
-            if (target != null) {
-                target.name = getNameTextField().text.toString()
-                target.target = calendar.timeInMillis
+            target.name = getNameTextField().text.toString()
+            target.target = calendar.timeInMillis
 
-                // Não fiz isso em dentro de uma coroutine por que
-                // o update no UI não irá funcionar de forma bem
-                // Percebi que o Save é feito de forma rapida
-                // então não vai impactar ao usuario
-                target.enabled = true
-                val item = TodoItemRepository.dataSource
-                    .insert(target)
+            // Não fiz isso em dentro de uma coroutine por que
+            // o update no UI não irá funcionar de forma bem
+            // Percebi que o isert é feito de forma rapida
+            // então não vai impactar ao usuario
+            target.enabled = true
+            val item = TodoItemRepository.dataSource
+                .insert(target)
 
-                item.scheduleNotification(requireContext())
+            item.scheduleNotification(requireContext())
 
-                todoModel.selectedItem = null
+            todoModel.selectedItem = null
 
-                findNavController().navigate(R.id.toHome1)
-            }
+            findNavController().navigate(R.id.toHome1)
         }
+
 
 
         return binder.root
@@ -130,15 +132,24 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         return requireView().findViewById(R.id.timeField)
     }
 
+    /**
+     * Exibe o DatePicker, se baseiando na data do Target.
+     */
     private fun showCalendarPicker(context: Context) {
         val picker = DatePickerDialog(
-            context, this@TodoItemEditorFragment,
-            calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
+            context,
+            this@TodoItemEditorFragment,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
         )
 
         picker.show()
     }
 
+    /**
+     * Exibe o TimePicker, se baseiando na hora do Target.
+     */
     private fun showTimePicker(context: Context) {
         val picker = TimePickerDialog(
             context, this@TodoItemEditorFragment,
@@ -148,18 +159,28 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         picker.show()
     }
 
+    /**
+     * Irá formatar a data para a formato mais humano.
+     */
     private fun formatDate(date: Date, context: Context): String {
         val dateFormat: DateFormat = android.text.format.DateFormat.getDateFormat(context)
 
         return (dateFormat.format(date))
     }
 
+    /**
+     * Irá formatar o horario para o formato mais humano.
+     */
     private fun formatTime(date: Date, context: Context): String {
         val dateFormat: DateFormat = android.text.format.DateFormat.getTimeFormat(context)
 
         return (dateFormat.format(date))
     }
 
+    /**
+     * Listener que irá passar a data que o usuario escolheu para o Calendar
+     * e atualizar o campo.
+     */
     override fun onDateSet(view: DatePicker, year: Int, month: Int, dayOfMonth: Int) {
 
         calendar.set(Calendar.YEAR, year)
@@ -169,6 +190,10 @@ class TodoItemEditorFragment : Fragment(), DatePickerDialog.OnDateSetListener,
         getDateTextField().setText(formatDate(calendar.time, view.context))
     }
 
+    /**
+     * Listener que irá passar o horario que o usuario escolheu para o Calendar
+     * e atualiar o campo.
+     */
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
 
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)

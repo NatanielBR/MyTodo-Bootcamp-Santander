@@ -4,9 +4,7 @@ import android.app.Application
 import android.media.Ringtone
 import android.media.RingtoneManager
 import com.natanielbr.mytodo.models.TodoItemRepository
-import com.natanielbr.mytodo.models.dataSource.InMemoryDataSource
 import com.natanielbr.mytodo.models.dataSource.ObjectBoxDataSource
-import com.natanielbr.mytodo.models.dataSource.box.ObjectBox
 
 class MyTodoApp : Application() {
     companion object {

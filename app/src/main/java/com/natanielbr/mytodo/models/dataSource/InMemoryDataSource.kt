@@ -4,7 +4,11 @@ import com.natanielbr.mytodo.models.dataSource.model.TodoItem
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
-class InMemoryDataSource() : DataSource() {
+/**
+ * DataSource que irá guardar os dados na memória do App, por um tempo ele foi utilizado
+ * para fazer o desenvolvimento do App e deixei aqui caso a ideia vá pra frente.
+ */
+class InMemoryDataSource : DataSource() {
     private val db: MutableMap<Int, TodoItem> = mutableMapOf()
 
     override fun getAll(): List<TodoItem> {
@@ -46,11 +50,10 @@ class InMemoryDataSource() : DataSource() {
         }
     }
 
-
-    private fun getByName(name: String): TodoItem? {
-        return db.values.find { it.name == name }
-    }
-
+    /**
+     * Metodo que irá gerar o id, ele irá consultar continuamente o map
+     * até encontrar um id que não esteja presente no map.
+     */
     private fun generateId(): Int {
         var id: Int
 
